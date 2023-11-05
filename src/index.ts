@@ -16,14 +16,14 @@ const server = http.createServer((_req: any, res: any) => {
 const main = async () => {
     const items = await NjuskaloService.getItems();
 
-    
     items.forEach((i: string) => {
         WhatsappService.sendMessage(i);
     });
-}
+};
 
 server.listen(port, hostname, () => {
     console.log(`Server running at http://${hostname}:${port}/`);
+    main();
 
     schedule.scheduleJob('35 * * * *', () => {
         main();
