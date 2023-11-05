@@ -21,7 +21,9 @@ export default class NjuskaloService {
         const response = await axios.get(this.url);
         const root = parse(response.data);
 
-        const entries = root.querySelectorAll('.EntityList--ListItemRegularAd .EntityList-item').slice(0, 5);
+        const entries = root.querySelectorAll(
+            '.EntityList--ListItemRegularAd .EntityList-item'
+        );
 
         return entries.map(e => {
             const href = e.querySelector("a")?.getAttribute('href');
