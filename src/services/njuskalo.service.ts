@@ -21,14 +21,15 @@ export default class NjuskaloService {
         const response = await axios.get(this.url);
         const root = parse(response.data);
 
-        const entries = root.querySelectorAll(
-            '.EntityList--ListItemRegularAd .EntityList-item'
-        );
+        const entries = root
+            .querySelectorAll('.EntityList--ListItemRegularAd .EntityList-item')
+            .map((e) => {
+                return e.querySelector('a')?.getAttribute('href');
+            })
+            .filter((e) => !!e);
 
-        return entries.map(e => {
-            const href = e.querySelector("a")?.getAttribute('href');
-
+        return entries.map((href) => {
             return `https://www.njuskalo.hr${href}`;
-        })
+        });
     }
 }
