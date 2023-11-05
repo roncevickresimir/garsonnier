@@ -1,5 +1,7 @@
-import NjuskaloService from "./services/njuskalo.service";
-import WhatsappService from "./services/whatsapp.service";
+import IndexService from './services/index.service';
+import NjuskaloService from './services/njuskalo.service';
+import OglasnikService from './services/oglasnik.service';
+import WhatsappService from './services/whatsapp.service';
 
 const schedule = require('node-schedule');
 
@@ -14,7 +16,11 @@ const server = http.createServer((_req: any, res: any) => {
 });
 
 const main = async () => {
-    const items = await NjuskaloService.getItems();
+    const items = [
+        ...(await NjuskaloService.getItems()),
+        ...(await IndexService.getItems()),
+        ...(await OglasnikService.getItems()),
+    ];
 
     items.forEach((i: string) => {
         WhatsappService.sendMessage(i);
@@ -23,7 +29,6 @@ const main = async () => {
 
 server.listen(port, hostname, () => {
     console.log(`Server running at http://${hostname}:${port}/`);
-    main();
 
     schedule.scheduleJob('35 * * * *', () => {
         main();

@@ -23,12 +23,12 @@ export default class NjuskaloService {
 
         const entries = root
             .querySelectorAll('.EntityList--ListItemRegularAd .EntityList-item')
-            .map((e) => {
+            .map((e: any) => {
                 return e.querySelector('a')?.getAttribute('href');
             })
-            .filter((e) => !!e);
+            .filter((e: any) => !!e);
 
-        return entries.map((href) => {
+        return entries.map((href: any) => {
             return `https://www.njuskalo.hr${href}`;
         });
     }
