@@ -1,14 +1,23 @@
-const axios = require("axios").default
+import { default as axios } from 'axios';
+
+import { ConfigService } from './config.service';
 
 export default class WhatsappService {
-    private static accessToken =
-        'EAAQxkvrLalgBOZCBNq3cf7QZC6H73R3zlxC8pmFXTMoiQMqX2D6wlvOxCK8CCJZAlzVwrYSOwVNEJMD7oYnm3zRVqn9OfXsfa6ZC7wWJHA8ySWBProPQ5bFZA6JZAz6ZBocqMxy640Qfx5f4wnlm8o3rcSSIwnud4x3RpnUfAZCJUOPQPOFZBZAMfd0zIRH8UKg3Wd';
-    private static senderId = '172462892610373';
-    private static recipientId = '385923841148';
+    private readonly config: ConfigService = new ConfigService();
 
-    public static sendMessage = (message: string) => {
-        axios
-            .post(
+    private accessToken: string;
+    private senderId: string;
+    private recipientId: string;
+
+    constructor() {
+        this.accessToken = this.config.wa_access_token;
+        this.senderId = this.config.wa_sender_id;
+        this.recipientId = this.config.wa_recipient_id;
+    }
+
+    public sendMessage = async (message: string): Promise<void> => {
+        try {
+            await axios.post(
                 `https://graph.facebook.com/v17.0/${this.senderId}/messages`,
                 {
                     messaging_product: 'whatsapp',
@@ -26,14 +35,9 @@ export default class WhatsappService {
                         'Content-Type': 'application/json',
                     },
                 }
-            )
-            .then((data: any) => {
-                'Message sent:';
-                console.log(data.data);
-            })
-            .catch((e: any) => {
-                'Message error:';
-                console.log(e.response.data);
-            });
+            );
+        } catch (e) {
+            console.log(e);
+        }
     };
 }

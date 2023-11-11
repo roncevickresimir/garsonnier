@@ -1,23 +1,32 @@
+import { default as axios } from 'axios';
 import { parse } from 'node-html-parser';
-const axios = require("axios").default
+
+import { ConfigService } from './config.service';
+import { Item } from '../models/item.model';
 
 export default class NjuskaloService {
-    private static url = 'https://www.njuskalo.hr/iznajmljivanje-stanova/zagreb?price%5Bmin%5D=300&price%5Bmax%5D=500'
-    public static data: string[] = [];
+    private readonly config: ConfigService = new ConfigService();
 
-    public static getItems = async (): Promise<string[]> => {
-        const items = await this.update();
+    private url: string;
+    public data: Item[] = [];
 
-        const result = items.filter(i => !this.data.includes(i));
-        
-        if(result.length) {
-            this.data = items;
-        }
-        
-        return result
+    constructor() {
+        this.url = `https://www.njuskalo.hr/iznajmljivanje-stanova/zagreb?price%5Bmin%5D=${this.config.min_price}&price%5Bmax%5D=${this.config.max_price}`;
     }
 
-    public static update = async () => {
+    public getItems = async (): Promise<Item[]> => {
+        const items = await this.fetchData();
+
+        const result = items.filter((i) => !this.data.includes(i));
+
+        if (result.length) {
+            this.data = items;
+        }
+
+        return result;
+    };
+
+    private fetchData = async (): Promise<Item[]> => {
         const response = await axios.get(this.url);
         const root = parse(response.data);
 
@@ -28,8 +37,11 @@ export default class NjuskaloService {
             })
             .filter((e: any) => !!e);
 
-        return entries.map((href: any) => {
-            return `https://www.njuskalo.hr${href}`;
+        return entries.map((href: string) => {
+            return {
+                name: href.split('/nekretnine/')[1].split('-oglas')[0],
+                url: `https://www.njuskalo.hr${href}`,
+            } as Item;
         });
-    }
+    };
 }
