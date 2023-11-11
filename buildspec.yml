@@ -13,3 +13,5 @@ artifacts:
   files:
     - "dist/**/*"
     - "node_modules/**/*"
+    - ".ebextensions/**/*"
+    - "Procfile"
