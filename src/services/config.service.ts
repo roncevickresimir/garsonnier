@@ -19,7 +19,7 @@ export class ConfigService {
         this.wa_sender_id = this.parseEnv('WA_SENDER_ID');
         this.wa_recipient_id = this.parseEnv('WA_RECIPIENT_ID');
 
-        this.max_price = this.parseEnv('MAX_PRICE');
+        this.min_price = this.parseEnv('MIN_PRICE');
         this.max_price = this.parseEnv('MAX_PRICE');
     }
 

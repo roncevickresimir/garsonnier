@@ -38,8 +38,11 @@ export default class App {
                 continue;
             }
 
-            await this.storage.putItem(i);
-            await this.whatsapp.sendMessage(i.url);
+            const messageSent = await this.whatsapp.sendMessage(i.url);
+
+            if (messageSent) {
+                await this.storage.putItem(i);
+            }
 
             await new Promise((res) => setTimeout(res, 500));
         }

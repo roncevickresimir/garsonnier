@@ -15,9 +15,9 @@ export default class WhatsappService {
         this.recipientId = this.config.wa_recipient_id;
     }
 
-    public sendMessage = async (message: string): Promise<void> => {
+    public sendMessage = async (message: string): Promise<boolean> => {
         try {
-            await axios.post(
+            const response = await axios.post(
                 `https://graph.facebook.com/v17.0/${this.senderId}/messages`,
                 {
                     messaging_product: 'whatsapp',
@@ -36,8 +36,14 @@ export default class WhatsappService {
                     },
                 }
             );
+
+            console.log(response.data);
+
+            return true;
         } catch (e) {
-            console.log(e);
+            console.log(e.response.data);
+
+            return false;
         }
     };
 }
