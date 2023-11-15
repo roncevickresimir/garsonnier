@@ -8,21 +8,22 @@ import ItemStorageService from './services/storage.service';
 import { Item } from './models/item.model';
 
 export default class App {
-    private readonly whatsapp: WhatsappService = new WhatsappService();
-    private readonly njuskalo: NjuskaloService = new NjuskaloService();
-    private readonly index: IndexService = new IndexService();
-    private readonly oglasnik: OglasnikService = new OglasnikService();
-    private readonly storage: ItemStorageService = new ItemStorageService();
+    private static readonly whatsapp: WhatsappService = new WhatsappService();
+    private static readonly njuskalo: NjuskaloService = new NjuskaloService();
+    private static readonly index: IndexService = new IndexService();
+    private static readonly oglasnik: OglasnikService = new OglasnikService();
+    private static readonly storage: ItemStorageService =
+        new ItemStorageService();
 
-    public run() {
-        this.main();
+    constructor() {
+        App.main();
 
         schedule.scheduleJob('35 * * * *', () => {
-            this.main();
+            App.main();
         });
     }
 
-    private main = async () => {
+    private static main = async () => {
         console.log('app.main()');
 
         const items: Item[] = [

@@ -1,22 +1,32 @@
-import * as http from 'http';
+import express from 'express';
 import App from './app';
+import { ConfigService } from './services/config.service';
 
-const hostname = '127.0.0.1';
-const port = 3000;
+const config = new ConfigService();
 
-const server = http.createServer((_req: any, res: any) => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/plain');
-    res.end('Hello World\n');
-});
+const app = express();
 
-server.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
+app.listen(config.port, config.hostname, () => {
+    console.log(`Server running at http://${config.hostname}:${config.port}/`);
 
     try {
-        const app = new App();
-        app.run();
+        new App();
     } catch (error) {
         console.log(error);
     }
+});
+
+app.get(config.meta_webhooks_callback, (req, res) => {
+    console.log(req);
+    const hub = {
+        mode: req.query['hub.mode'] as string,
+        challenge: req.query['hub.challenge'] as string,
+        verify_token: req.query['hub.verify_token'] as string,
+    };
+
+    res.status(200).send(hub.challenge);
+});
+
+app.get('/health', (_req, res) => {
+    res.status(200).send();
 });
