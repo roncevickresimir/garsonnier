@@ -21,10 +21,14 @@ export default class ItemStorageService {
         return this.dynamoDB.put(params).promise();
     };
 
-    public getItemByName = async (name: string): Promise<Item | undefined> => {
+    public getItemByTitle = async (
+        title: string
+    ): Promise<Item | undefined> => {
+        if (!title.length) return;
+        
         const params = {
             TableName: this.config.table_name,
-            Key: { ['name']: name },
+            Key: { ['title']: title },
         };
 
         return (await this.dynamoDB.get(params).promise()).Item as

@@ -1,6 +1,6 @@
 import * as schedule from 'node-schedule';
 
-import IndexService from './services/index.service';
+import IndexhrService from './services/indexhr.service';
 import NjuskaloService from './services/njuskalo.service';
 import OglasnikService from './services/oglasnik.service';
 import WhatsappService from './services/whatsapp.service';
@@ -10,7 +10,7 @@ import { Item } from './models/item.model';
 export default class App {
     private static readonly whatsapp: WhatsappService = new WhatsappService();
     private static readonly njuskalo: NjuskaloService = new NjuskaloService();
-    private static readonly index: IndexService = new IndexService();
+    private static readonly indexhr: IndexhrService = new IndexhrService();
     private static readonly oglasnik: OglasnikService = new OglasnikService();
     private static readonly storage: ItemStorageService =
         new ItemStorageService();
@@ -24,22 +24,20 @@ export default class App {
     }
 
     private static main = async () => {
-        console.log('app.main()');
-
         const items: Item[] = [
             ...(await this.njuskalo.getItems()),
-            ...(await this.index.getItems()),
+            ...(await this.indexhr.getItems()),
             ...(await this.oglasnik.getItems()),
         ];
 
         for (const i of items) {
-            const exists = !!(await this.storage.getItemByName(i.name));
+            const exists = !!(await this.storage.getItemByTitle(i.title));
 
             if (exists) {
                 continue;
             }
 
-            const messageSent = await this.whatsapp.sendMessage(i.url);
+            const messageSent = await this.whatsapp.sendMessage(i);
 
             if (messageSent) {
                 await this.storage.putItem(i);

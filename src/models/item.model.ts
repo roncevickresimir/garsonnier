@@ -1,4 +1,12 @@
+export enum ItemType {
+    NJUSKALO = 'NJUSKALO',
+    INDEXHR = 'INDEXHR',
+    OGLASNIK = 'OGLASNIK',
+}
+
 export type Item = {
-    name: string;
+    title: string;
     url: string;
+    image: string;
+    type: ItemType;
 };

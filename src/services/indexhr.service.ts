@@ -5,15 +5,15 @@ import { ConfigService } from './config.service';
 import { Item, ItemType } from '../models/item.model';
 import { getUrlMetaData } from './utils';
 
-export default class NjuskaloService {
+export default class IndexhrService {
     private readonly config: ConfigService = new ConfigService();
 
     private baseUrl: string;
     private queryUrl: string;
 
     constructor() {
-        this.baseUrl = 'https://www.njuskalo.hr/';
-        this.queryUrl = `https://www.njuskalo.hr/iznajmljivanje-stanova/zagreb?price%5Bmin%5D=${this.config.min_price}&price%5Bmax%5D=${this.config.max_price}`;
+        this.baseUrl = 'https://www.index.hr/';
+        this.queryUrl = `https://www.index.hr/oglasi/najam-stanova/gid/3279?pojam=&sortby=1&elementsNum=10&cijenaod=${this.config.min_price}&cijenado=${this.config.max_price}&tipoglasa=1&pojamZup=1153&grad=&naselje=&attr_Int_988=&attr_Int_887=&attr_bit_stan=&attr_bit_brojEtaza=&attr_gr_93_1=&attr_gr_93_2=&attr_Int_978=&attr_Int_1334=&attr_bit_eneregetskiCertifikat=&vezani_na=988-887_562-563_978-1334`;
     }
 
     public getItems = async (): Promise<Item[]> => {
@@ -21,8 +21,8 @@ export default class NjuskaloService {
         const root = parse(response.data);
 
         const entries = root
-            .querySelectorAll('.EntityList--ListItemRegularAd .EntityList-item')
-            .map((e) => e.querySelector('a')?.getAttribute('href')?.slice(1))
+            .querySelectorAll('.OglasiRezHolder')
+            .map((e) => e.querySelector('a')?.getAttribute('href')?.split(this.baseUrl)[1])
             .filter((e) => !!e);
 
         return Promise.all(
@@ -35,7 +35,7 @@ export default class NjuskaloService {
                     title: title,
                     url: url,
                     image: image,
-                    type: ItemType.NJUSKALO,
+                    type: ItemType.INDEXHR,
                 };
             })
         );
